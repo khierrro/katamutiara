@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Daily Inspiration - Quotes</title>
+<style>
+       /* Reset & Base Styles */
+       * {
+           margin: 0;
+           padding: 0;
+           box-sizing: border-box;
+       }
+       body {
+           font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+           background-color: #f0f4f8;
+           color: #333;
+           padding: 2rem;
+           min-height: 100vh;
+       }
+       /* Header / Judul */
+       .header-container {
+           text-align: center;
+           margin-bottom: 3rem;
+       }
+       h1 {
+           color: #2c3e50;
+           font-size: 2.5rem;
+           margin-bottom: 0.5rem;
+       }
+       p.subtitle {
+           color: #7f8c8d;
+           font-size: 1.1rem;
+       }
+       /* Grid Layout untuk 9 Quotes */
+       .quotes-grid {
+           display: grid;
+           /* Membuat kolom yang responsif, minimal 300px per card */
+           grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+           gap: 1.5rem;
+           max-width: 1200px;
+           margin: 0 auto;
+       }
+       /* Styling Card */
+       .quote-card {
+           background: #ffffff;
+           padding: 2rem;
+           border-radius: 12px;
+           box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+           border-left: 6px solid #3498db; /* Aksen warna biru */
+           display: flex;
+           flex-direction: column;
+           justify-content: space-between;
+           transition: transform 0.3s ease, box-shadow 0.3s ease;
+       }
+       .quote-card:hover {
+           transform: translateY(-5px);
+           box-shadow: 0 10px 15px rgba(0, 0, 0, 0.1);
+       }
+       /* Teks Kutipan */
+       .quote-text {
+           font-size: 1.1rem;
+           font-style: italic;
+           color: #34495e;
+           line-height: 1.6;
+           margin-bottom: 1.5rem;
+           position: relative;
+       }
+       /* Menambahkan tanda kutip dekoratif */
+       .quote-text::before {
+           content: '\201C'; /* Simbol kutip kiri */
+           font-size: 3rem;
+           color: #e0e6ed;
+           position: absolute;
+           top: -15px;
+           left: -15px;
+           z-index: 1;
+       }
+       .quote-text span {
+           position: relative;
+           z-index: 2;
+       }
+       /* Penulis */
+       .quote-author {
+           font-weight: 600;
+           text-align: right;
+           color: #e74c3c;
+           font-size: 0.95rem;
+       }
+       /* State Loading & Error */
+       #status-message {
+           text-align: center;
+           font-size: 1.2rem;
+           color: #7f8c8d;
+           margin-top: 2rem;
+       }
+</style>
+</head>
+<body>
+<div class="header-container">
+<h1>🌟 Daily Inspiration</h1>
+<p class="subtitle">Kutipan motivasi acak untuk mencerahkan harimu</p>
+</div>
+<div id="status-message">Memuat kutipan inspiratif...</div>
+<div class="quotes-grid" id="quotes-container"></div>
+<script>
+       // DOM Elements
+       const container = document.getElementById('quotes-container');
+       const statusMessage = document.getElementById('status-message');
+       // Fungsi untuk mengambil data dari API yang sudah dibuat di backend (poin b.a)
+       async function fetchQuotes() {
+           try {
+               // Pastikan endpoint backend Anda berjalan dan mengembalikan 9 data JSON
+               const response = await fetch('/api/quotes/');
+               if (!response.ok) {
+                   throw new Error('Gagal mengambil data dari server');
+               }
+               const quotes = await response.json();
+               // Hilangkan pesan loading
+               statusMessage.style.display = 'none';
+               // Looping data dan render ke dalam HTML
+               quotes.forEach(quote => {
+                   const card = document.createElement('div');
+                   card.className = 'quote-card';
+                   // Struktur isi card (mengambil property 'text' dan 'author' sesuai soal)
+                   card.innerHTML = `
+<p class="quote-text"><span>${quote.text}</span></p>
+<p class="quote-author">&mdash; ${quote.author || 'Anonim'}</p>
+                   `;
+                   container.appendChild(card);
+               });
+           } catch (error) {
+               console.error(error);
+               statusMessage.innerText = 'Maaf, gagal memuat kutipan. Silakan coba lagi.';
+               statusMessage.style.color = '#e74c3c';
+           }
+       }
+       // Panggil fungsi saat halaman selesai dimuat
+       document.addEventListener('DOMContentLoaded', fetchQuotes);
+</script>
+</body>
+</html>
