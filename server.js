@@ -52,7 +52,7 @@ app.get('/api/quotes', (req, res) => {
 */
 app.get('/quotes', (req, res) => {
    // Mengirim file 'index.html' (template tampilan yang dibuat sebelumnya) ke browser
-   res.sendFile(path.join(__dirname, 'index.html'));
+   res.sendFile(path.join(__dirname, './public/index.html'));
 });
 
 // ==========================================
